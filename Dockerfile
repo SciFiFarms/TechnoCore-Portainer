@@ -12,7 +12,8 @@ ENTRYPOINT ["/portainer"]
 # Add dogfish
 COPY dogfish/ /usr/share/dogfish
 RUN ln -s /usr/share/dogfish/dogfish /usr/bin/dogfish
-#COPY shell-migrations/ /usr/share/dogfish/shell-migrations
+COPY shell-migrations/ /usr/share/dogfish/shell-migrations
+COPY dogfish/shell-migrations-shared/ /usr/share/dogfish/shell-migrations-shared
 
 # Create log file.
 RUN mkdir /data
