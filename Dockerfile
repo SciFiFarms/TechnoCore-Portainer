@@ -1,11 +1,14 @@
 FROM portainer/portainer AS base
 
 FROM alpine:latest
-RUN apk add --no-cache bash
+# TODO: Pick either CURL or HTTPie and use that consistently. 
+RUN apk add --no-cache bash python py-pip ca-certificates curl
+RUN pip install --upgrade pip
+RUN pip install httpie httpie-unixsocket && rm -rf /var/cache/apk/*
 COPY --from=base / /
-WORKDIR /
+WORKDIR /data/
 EXPOSE 9000
-ENTRYPOINT ["/portainer"]
+CMD dogfish migrate & /portainer -H unix:///var/run/docker.sock
 
 # RUN ["sh", "-c"]
 
@@ -16,7 +19,6 @@ COPY shell-migrations/ /usr/share/dogfish/shell-migrations
 COPY dogfish/shell-migrations-shared/ /usr/share/dogfish/shell-migrations-shared
 
 # Create log file.
-RUN mkdir /data
 RUN touch /data/migrations.log
 
 # Symlink log file.
