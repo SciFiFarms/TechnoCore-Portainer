@@ -2,7 +2,7 @@ FROM portainer/portainer AS base
 
 FROM alpine:latest
 # TODO: Pick either CURL or HTTPie and use that consistently. 
-RUN apk add --no-cache bash python py-pip ca-certificates curl mosquitto-clients
+RUN apk add --no-cache bash python py-pip ca-certificates curl
 RUN pip install --upgrade pip
 RUN pip install httpie httpie-unixsocket && rm -rf /var/cache/apk/*
 COPY --from=base / /
@@ -11,6 +11,13 @@ EXPOSE 9000
 CMD dogfish migrate & /portainer -H unix:///var/run/docker.sock
 
 # RUN ["sh", "-c"]
+
+
+# Set up the entrypoint
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+ENTRYPOINT entrypoint.sh
+CMD -H unix:///var/run/docker.sock
+
 
 # Add dogfish
 COPY dogfish/ /usr/share/dogfish
@@ -25,7 +32,9 @@ RUN touch /data/migrations.log
 RUN mkdir /var/lib/dogfish
 RUN ln -s /data/migrations.log /var/lib/dogfish/migrations.log
 
+# Add the mqtt listeners. 
 COPY mqtt-scripts/ /usr/share/mqtt-scripts
+RUN chmod +x /usr/share/mqtt-scripts/*
 WORKDIR /usr/share/mqtt-scripts
 VOLUME /data
 # Might need to touch, or otherwise setup, /data/migrations.log.
