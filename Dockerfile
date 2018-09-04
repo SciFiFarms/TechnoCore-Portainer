@@ -2,16 +2,17 @@ FROM portainer/portainer AS base
 
 FROM alpine:latest
 # TODO: Pick either CURL or HTTPie and use that consistently. 
-RUN apk add --no-cache bash python py-pip ca-certificates curl
+RUN apk add --no-cache bash python py-pip ca-certificates curl mosquitto-clients
 RUN pip install --upgrade pip
 RUN pip install httpie httpie-unixsocket && rm -rf /var/cache/apk/*
 COPY --from=base / /
 WORKDIR /data/
 EXPOSE 9000
-CMD dogfish migrate & /portainer -H unix:///var/run/docker.sock
 
 # RUN ["sh", "-c"]
 
+# Put docker in $PATH
+RUN ln -s /docker /usr/bin/docker
 
 # Set up the entrypoint
 COPY entrypoint.sh /usr/bin/entrypoint.sh
