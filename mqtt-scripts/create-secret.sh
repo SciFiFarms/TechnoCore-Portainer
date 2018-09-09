@@ -18,6 +18,8 @@ function subscribe()
         local message=$(echo "$RAW_DATA" | cut -d" " -f2- )
         "$@"
     done < <( mosquitto_sub -i "portainer_sub" -h "mqtt" -p 8883 -q 1 \
+        -c \
+        -R \
         -t "$sub_topic" \
         -u $(cat /run/secrets/mqtt_username) \
         -P $(cat /run/secrets/mqtt_password) \
@@ -33,7 +35,7 @@ function create_secret()
 
     mount_point=$(echo "$cmd" | rev | cut -d" " -f1 | rev)
     service_name=$(echo "$cmd" | rev | cut -d" " -f2 | rev)
-    stack_name=$(echo "$cmd" | rev | cut -d" " -f3 | rev)
+    #stack_name=$(echo "$cmd" | rev | cut -d" " -f3 | rev)
     # TODO: Currently some swarm service names have been abrivated 
     # (ha=home-assistant, nr=node-red). I'm moving towards the full names 
     # instead, but until that happens, I need to support some way to provide
@@ -49,7 +51,7 @@ function create_secret()
         echo "swarm_service_name doesn't exist"
     fi
 
-    secret_name="${stack_name}_${secret_service_name}_${mount_point}"
+    secret_name="${stackname}_${secret_service_name}_${mount_point}"
 
     # TODO: Instead of passing in the service, it would be better to look up all 
     # the services that use the given secret_name.
@@ -64,10 +66,10 @@ function create_secret()
     echo "Service_name: $service_name"
 
     echo -e "$message" | docker secret create ${secret_name}.temp -
-    docker service update --detach=false --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stack_name}_${service_name}
+    docker service update --detach=false --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stackname}_${service_name}
     docker secret rm ${secret_name}
     echo -e "$message" | docker secret create ${secret_name} - 
-    docker service update --detach=false --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stack_name}_${service_name} 
+    docker service update --detach=false --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stackname}_${service_name} 
     docker secret rm ${secret_name}.temp
 }
 
