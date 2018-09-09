@@ -16,8 +16,8 @@ RUN ln -s /docker /usr/bin/docker
 
 # Set up the entrypoint
 COPY entrypoint.sh /usr/bin/entrypoint.sh
-ENTRYPOINT entrypoint.sh
-CMD -H unix:///var/run/docker.sock
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["-H", "unix:///var/run/docker.sock", "--ssl", "--sslcert", "/run/secrets/cert", "--sslkey", "/run/secrets/key"]
 
 
 # Add dogfish

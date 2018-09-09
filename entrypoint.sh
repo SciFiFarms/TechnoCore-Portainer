@@ -2,4 +2,4 @@
 
 dogfish migrate &
 source /usr/share/mqtt-scripts/init.sh 
-/portainer "$@"
+/portainer $@
