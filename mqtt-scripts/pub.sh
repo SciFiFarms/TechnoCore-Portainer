@@ -2,7 +2,7 @@
 
 function create()
 {
-    mosquitto_pub -i portainer_create_secret -h mqtt -p 8883 -r -q 1 \
+    mosquitto_pub -i portainer_create_secret -h mqtt -p 8883 -q 1 \
         -i "Portainer_pub" \
         -t portainer/secret/create/vault/mqtt_username \
         -m "New Username" \
