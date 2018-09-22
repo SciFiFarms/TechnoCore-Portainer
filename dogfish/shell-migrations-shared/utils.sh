@@ -16,16 +16,27 @@ extract_from_json(){
     grep -Eo '"'$1'":.*?[^\\]"' <<< "$2" | cut -d \" -f 4
 }
 
-# $1: The secret name (Without stack reference, this will be delt with on portainer's end.)
+# $1: The mount point(Without stack reference, this will be delt with on portainer's end.)
+#   Should be of the format service_name/mount_point
+#   If the swarm service is different than the service name used to save the 
+#   secret, then use secret_service_name&swarm_service_name. For example:
+#   portainer/secret/create/node-red&nr/mqtt_username
 # $2: The secret itself
 function create_secret()
 {
-    mosquitto_pub -h mqtt -p 8883 -q 1 \
-        -t portainer/secrets/create/$1 \
+    #echo "Starting create_secret()"
+    until mosquitto_pub -i dogfish_create_secret -h mqtt -p 8883 -q 2 \
+        -t portainer/secret/create/$1 \
         -m "$2" \
         -u $(cat /run/secrets/mqtt_username) \
         -P "$(cat /run/secrets/mqtt_password)" \
-        --cafile /run/secrets/ca 
+       --cafile /run/secrets/ca
+    do
+        echo "Couldn't connect to MQTT. Sleeping."
+        sleep 5
+    done
+        
+    #echo "Finished create_secret()"
 }
 
 # $1: The number of random characters to generate.
