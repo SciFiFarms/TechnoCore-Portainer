@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/SciFiFarms/dogfish.git
+	remote = git@github.com:SciFiFarms/dogfish.git
 	branch = master
 	commit = a4d4f79380fd3eb6ae9a50b0c4e698f3087c54aa
 	parent = e15d5c0acaef99d9f827e3f21cdb1f97e0436920
