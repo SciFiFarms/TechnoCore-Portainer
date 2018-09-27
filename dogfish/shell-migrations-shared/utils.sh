@@ -54,3 +54,21 @@ function get_random()
     done;
     echo $response
 }
+
+# $1: Client ID
+# $2: topic
+# $3: message
+# TODO: This function should be moved somewhere more shared. 
+function mqtt_publish()
+{
+    until mosquitto_pub -i $1 -h mqtt -p 8883 -q 0 \
+        -t $2 \
+        -m "$3" \
+        -u $(cat /run/secrets/mqtt_username) \
+        -P "$(cat /run/secrets/mqtt_password)" \
+        --cafile /run/secrets/ca
+    do
+        echo "Couldn't reach MQTT. Sleeping."
+        sleep 1
+    done
+}
