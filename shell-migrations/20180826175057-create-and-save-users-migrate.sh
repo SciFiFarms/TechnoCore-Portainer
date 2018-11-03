@@ -20,8 +20,8 @@ done
 # Figure out a better way to handle this. 
 sleep 10
 
-create_mqtt_user home-assistant "home_assistant&ha"
-create_mqtt_user node-red "node_red&nr"
+create_mqtt_user home_assistant "home_assistant"
+create_mqtt_user node_red "node_red"
 create_mqtt_user platformio "platformio"
 docker rm -f pio
 #docker service update --force $stackname platformio
