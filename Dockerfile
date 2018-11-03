@@ -1,4 +1,4 @@
-FROM portainer/portainer AS base
+FROM portainer/portainer:1.19.2 AS base
 
 FROM alpine:latest
 # TODO: Pick either CURL or HTTPie and use that consistently. 
@@ -15,9 +15,11 @@ EXPOSE 9000
 RUN ln -s /docker /usr/bin/docker
 
 # Set up the entrypoint
+COPY go-init /bin/go-init
 COPY entrypoint.sh /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["-H", "unix:///var/run/docker.sock", "--ssl", "--sslcert", "/run/secrets/cert", "--sslkey", "/run/secrets/key"]
+COPY exitpoint.sh /usr/bin/exitpoint.sh
+ENTRYPOINT ["go-init"]
+CMD ["-pre", "entrypoint.sh", "-main", "/portainer -H unix:///var/run/docker.sock --ssl --sslcert /run/secrets/cert --sslkey /run/secrets/key", "-post", "exitpoint.sh"]
 
 
 # Add dogfish
