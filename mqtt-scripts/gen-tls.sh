@@ -3,6 +3,8 @@
 source ${lib_path}acme-helpers.sh
 source ${lib_path}create-secret.sh
 
+# TODO: Consider having these optionally passed in via command line or ENV instead of forcing from CMD. 
+#       It would allow me to not have to input the creds every time. Nice. GOOD FIRST TICKET
 # https://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
 read -p "DuckDNS Sub-domain - example: technocore.duckdns.org should enter \"technocore\" : " domain
 read -s -p "DuckDNS Token: " token
@@ -24,5 +26,4 @@ END
 )
 update_duckdns_tls "$acme_secret" issue 
 create_secret portainer acme_env "$acme_secret"
-# This prevents the process from finishing before the container has shutdown.
-sleep 600
+exit 0
