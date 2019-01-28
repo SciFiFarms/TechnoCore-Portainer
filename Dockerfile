@@ -1,6 +1,6 @@
 FROM portainer/portainer:1.19.2 AS base
 
-FROM alpine:latest
+FROM neilpang/acme.sh:latest
 # TODO: Pick either CURL or HTTPie and use that consistently. 
 RUN apk add --no-cache bash python py-pip ca-certificates curl mosquitto-clients
 RUN pip install --upgrade pip
