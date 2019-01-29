@@ -28,5 +28,7 @@ function update_duckdns_tls()
 
     # Update DuckDNS entry with the internal IP address. 
     ip=$(ping -c 1 ${hostname_trimmed} | awk -F '[()]' '/PING/{print $2}')
+    # How to silence curl: https://unix.stackexchange.com/questions/196549/hide-curl-output
+    echo url="https://www.duckdns.org/update?domains=${ACME_DOMAIN}&token=${DuckDNS_Token}&ip=${ip}" | curl -s -K - > /dev/null
     return 0
 }

@@ -9,10 +9,11 @@ function create_secret()
     mount_point=$2
     secret_name=${stack_name}_${service_name}_${mount_point}
     secret=$3
-    echo -e "$secret" | docker secret create ${secret_name}.temp -
-    docker service update --detach=true --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stackname}_${service_name}
-    docker secret rm ${secret_name}
-    echo -e "$secret" | docker secret create ${secret_name} - 
-    docker service update --detach=true --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stackname}_${service_name} 
-    docker secret rm ${secret_name}.temp
+    echo "Updating secret ${secret_name}"
+    echo -e "$secret" | docker secret create ${secret_name}.temp - > /dev/null
+    docker service update --detach=true --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stackname}_${service_name} > /dev/null
+    docker secret rm ${secret_name} > /dev/null
+    echo -e "$secret" | docker secret create ${secret_name} - > /dev/null
+    docker service update --detach=true --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stackname}_${service_name} > /dev/null
+    docker secret rm ${secret_name}.temp > /dev/null
 }
