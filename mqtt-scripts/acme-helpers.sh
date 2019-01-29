@@ -17,7 +17,10 @@ function update_duckdns_tls()
     set +a
     
     hostname_trimmed=$(echo ${DOCKER_HOSTNAME} | cut -d"." -f 1)
-    acme.sh --dnssleep 30 --test --$2 -d $ACME_DOMAIN $ACME_FLAGS # $ACME_CHALLENGE_ALIAS 
+    if ! acme.sh --dnssleep 30 --test --$2 -d $ACME_DOMAIN $ACME_FLAGS # $ACME_CHALLENGE_ALIAS 
+    then
+        return 1
+    fi
 
     # Update secrets
     create_secret nginx cert_bundle "$(cat /acme.sh/${ACME_DOMAIN}/fullchain.cer)"
@@ -25,5 +28,5 @@ function update_duckdns_tls()
 
     # Update DuckDNS entry with the internal IP address. 
     ip=$(ping -c 1 ${hostname_trimmed} | awk -F '[()]' '/PING/{print $2}')
-    echo url="https://www.duckdns.org/update?domains=${ACME_DOMAIN}&token=${DuckDNS_Token}&ip=${ip}" | curl -K -
+    return 0
 }
