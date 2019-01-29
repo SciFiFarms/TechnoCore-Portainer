@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-if [ -f /run/secrets/acme_env ]; then
-    eval "$(cat /run/secrets/acme_env)"
-    echo "$ACME_DOMAIN"
-    exit 0
+if cat /run/secrets/acme_env | grep "Not yet set." &> /dev/null
+then
+    echo "acme_env has not been set."
+    exit 1
 fi
 
-exit 1
+eval "$(cat /run/secrets/acme_env)" &> /dev/null
+# echo caused non-ascii chars to be printed."
+printf "$ACME_DOMAIN"
+exit 0
