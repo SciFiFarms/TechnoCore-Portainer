@@ -3,6 +3,7 @@
 source ${lib_path}acme-helpers.sh
 source ${lib_path}create-secret.sh
 
+# TODO: Write a better explanation of what is going on here. 
 # TODO: Consider having these optionally passed in via command line or ENV instead of forcing from CMD. 
 #       It would allow me to not have to input the creds every time. Nice. GOOD FIRST TICKET
 #       Should also investigate why if failed after running the first time, it has to be restarted to work. 
@@ -27,7 +28,8 @@ END
 )
 if update_duckdns_tls "$acme_secret" issue 
 then
-create_secret portainer acme_env "$acme_secret"
+    create_secret portainer acme_env "$acme_secret"
+    create_secret home_assistant domain "$domain.duckdns.org"
 else
     echo "Could not issue TLS cert."
     exit 1
