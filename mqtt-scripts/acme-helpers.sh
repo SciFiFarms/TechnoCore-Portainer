@@ -19,6 +19,9 @@ function update_duckdns_tls()
     hostname_trimmed=$(echo ${DOCKER_HOSTNAME} | cut -d"." -f 1)
     if ! acme.sh --dnssleep 30 $acme_flags --$2 -d $ACME_DOMAIN $ACME_FLAGS # $ACME_CHALLENGE_ALIAS 
     then
+        # DuckDNS's TTL is 1 minute. 
+        echo "Waiting 30 seconds to allow caches to clear before retrying."
+        sleep 30
         return 1
     fi
 
