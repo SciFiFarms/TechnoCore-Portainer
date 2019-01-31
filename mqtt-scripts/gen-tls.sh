@@ -31,8 +31,9 @@ END
 )
 if update_duckdns_tls "$acme_secret" issue 
 then
-    create_secret portainer acme_env "$acme_secret"
     create_secret home_assistant domain "$domain.duckdns.org"
+    # Update the portainer secret last. It will restart the container.
+    create_secret portainer acme_env "$acme_secret"
 else
     echo "Could not issue TLS cert."
     exit 1
