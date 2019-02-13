@@ -22,3 +22,4 @@ sleep 10
 
 create_mqtt_user home_assistant "home_assistant"
 create_mqtt_user node_red "node_red"
+create_mqtt_user esphomeyaml "esphomeyaml"
