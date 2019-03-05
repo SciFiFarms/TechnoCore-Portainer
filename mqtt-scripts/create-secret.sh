@@ -14,6 +14,16 @@ function create_secret()
     docker service update --detach=true --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stackname}_${service_name} > /dev/null
     docker secret rm ${secret_name} > /dev/null
     echo -e "$secret" | docker secret create ${secret_name} - > /dev/null
-    docker service update --detach=true --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stackname}_${service_name} > /dev/null
+    if [ "$service_name" == "home_assistant_db" ] && [ "$mount_point" == "key" ]
+    then
+        custom_options=",mode=0400,uid=999"
+    elif [ "$service_name" == "home_assistant" ] && [ "$mount_point" == "key" ]
+    then
+        custom_options=",mode=0400"
+    else
+        custom_options=",mode=0444"
+    fi
+
+    docker service update --detach=true --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point}${custom_options} ${stackname}_${service_name} > /dev/null
     docker secret rm ${secret_name}.temp > /dev/null
 }
