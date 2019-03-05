@@ -37,7 +37,7 @@ create_tls(){
 
 # Create TLS certs for services.
 create_TLS_certs(){
-    run_vault -c 'vault login $(cat /run/secrets/vault_token)' > /dev/null
+    run_vault -c "vault login $insecure \$(cat /run/secrets/vault_token)"  > /dev/null
     for service in "${services[@]}"
     do
             echo "Creating TLS certs for ${stack_name}_$service"
@@ -47,7 +47,7 @@ create_TLS_certs(){
 
 unseal_vault(){
     echo "Unsealing Vault"
-    run_vault 'vault operator unseal -tls-skip-verify "$(cat /run/secrets/vault_unseal)"'
+    run_vault -c 'vault operator unseal -tls-skip-verify "$(cat /run/secrets/vault_unseal)"'
 }
 
 
@@ -56,6 +56,7 @@ unseal_vault(){
 # run_portainer
 # ./renew-tls.sh --insecure
 if [ "${1}" == "--insecure" ]; then
+    echo "Running in insecure mode"
     insecure="-tls-skip-verify"
 fi
 
