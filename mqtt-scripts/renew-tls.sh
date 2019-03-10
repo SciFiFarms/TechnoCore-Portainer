@@ -11,7 +11,7 @@ declare -a services=(home_assistant mqtt home_assistant_db node_red docs vault )
 
 function run_vault()
 {
-    docker exec -it $(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 2).$(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 1) /bin/sh -c "$@"
+    docker exec $(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 2).$(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 1) /bin/sh -c "$@"
 }
 
 # $1: service name. Examples are "vault", "emq"
@@ -47,9 +47,19 @@ create_TLS_certs(){
 
 unseal_vault(){
     echo "Unsealing Vault"
-    run_vault -c 'vault operator unseal -tls-skip-verify "$(cat /run/secrets/vault_unseal)"'
+    run_vault "vault operator unseal $insecure \"\$(cat /run/secrets/vault_unseal)\""
 }
 
+vault_login(){
+    echo "Logging into Vault"
+    run_vault -c "vault login \$(cat /run/secrets/vault_token)" > /dev/null
+}
+
+# $1 = policy/service name. 
+create_vault_token() {
+    local token=$(run_vault "vault token create -policy=$1 -ttl=\"720h\" -display-name=\"$1\" -field=\"token\"")
+    create_secret ${1} token $token
+}
 
 # TODO: Make an actual flag for insecure mode. --insecure. 
 # In order to use this flag, you MUST be running the command from the service.
@@ -60,4 +70,20 @@ if [ "${1}" == "--insecure" ]; then
     insecure="-tls-skip-verify"
 fi
 
+# TODO: Wrap these in a pythonish if __main__ kinda wrapper to allow lib usage 
+#       as well as being directly runnable.
+
+vault_login
 create_TLS_certs
+
+until run_vault -c "echo \"Vault online\"" 2> /dev/null; do
+    echo "Waiting for Vault to come back online."
+    sleep 5
+done
+sleep 11
+vault_login
+
+# TODO: These are duplicated in the installer. Should combine somehow.
+create_vault_token esphomeyaml
+create_vault_token mqtt
+create_vault_token portainer # Do Portainer last. 
