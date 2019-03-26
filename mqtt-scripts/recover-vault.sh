@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # TODO: Figure out how to auto include this.
 source ${lib_path}create-secret.sh
-source  /var/run/.env
+if [ -f "/var/run/technocore/.env" ]; then
+    source  /var/run/technocore/.env
+fi
 
 vault_i() {
     docker exec -i $containerId vault "$@"

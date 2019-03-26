@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # TODO: Figure out how to auto include this.
 source ${lib_path}create-secret.sh
-source  /var/run/.env
+if [ -f "/var/run/technocore/.env" ]; then
+    source  /var/run/technocore/.env
+fi
 
 # This list is duplicated in install.sh. 
 # TODO: I've just removed the nginx service. Should actually look at env var to make that judgement. 
