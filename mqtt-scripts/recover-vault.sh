@@ -43,6 +43,10 @@ cd /var/run
 containerId=$(docker run --rm -d --name ${stack_name}_vault -e "VAULT_CONFIG_DIR=/vault/setup" -e "VAULT_ADDR=http://127.0.0.1:8200" -v ${stack_name}_vault:/vault/file ${image_provider}/technocore-vault:${TAG})
 # Wait for the vault container to come up.
 sleep 10
+# TODO: I don't think I have to mount this locally. I might just be able to run 
+#       these from within the container itself. Although come to think of it, 
+#       I'm not sure the container has the secrets... Would have to add and 
+#       remove as a temporary service to add a secret. May even need a stack?
 vault_i operator unseal "$(cat /run/secrets/unseal)"
 vault_i login $insecure "$(cat /run/secrets/vault_token)"
 create_tls vault
