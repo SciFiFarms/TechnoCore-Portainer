@@ -12,11 +12,11 @@ vault_i() {
 # TODO: This is duplicated in portainer/mqtt-scripts/renew-tls.sh
 # $1: service name. Examples are "vault", "emq"
 create_tls(){
-    local alt_names="${1}.local,${1}"
+    local alt_names="${1}.${domain:-scifi.farm},${1}.local"
     if [ "$1" == "nginx" ]; then
-        alt_names="${1}.local,${1},${stack_name},${stack_name}.local,${stack_name}.${domain},${DOCKER_HOSTNAME},${DOCKER_HOSTNAME}.local,${DOCKER_HOSTNAME}.${domain}"
+        alt_names="${1}.${domain:-scifi.farm},${1}.local,${stack_name:-technocore},${stack_name:-technocore}.local,${stack_name:-technocore}.${domain:-scifi.farm},${HOSTNAME},${HOSTNAME}.local,${HOSTNAME}.${domain:-scifi.farm}"
     fi
-    local tlsResponse=$(vault_i write $insecure -format=json ca/issue/tls common_name="${1}.${domain}" alt_names="$alt_names" ttl=720h format=pem)
+    local tlsResponse=$(vault_i write -format=json ca/issue/tls common_name="${1}" alt_names="$alt_names" ttl=720h format=pem)
     # TODO: This check doesn't seem to be working.
     if [ $? != 0 ];
     then
@@ -47,8 +47,9 @@ sleep 10
 #       these from within the container itself. Although come to think of it, 
 #       I'm not sure the container has the secrets... Would have to add and 
 #       remove as a temporary service to add a secret. May even need a stack?
-vault_i operator unseal "$(cat /run/secrets/unseal)"
-vault_i login $insecure "$(cat /run/secrets/vault_token)"
+vault_i operator unseal \$(cat /run/secrets/vault_unseal)
+#vault_i operator unseal "$(cat /run/secrets/unseal)"
+vault_i login \$(cat /run/secrets/vault_token)
 create_tls vault
 
 # Cleanup

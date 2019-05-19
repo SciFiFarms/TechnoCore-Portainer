@@ -50,7 +50,7 @@ create_TLS_certs(){
 
 unseal_vault(){
     echo "Unsealing Vault"
-    run_vault "vault operator unseal $insecure \"\$(cat /run/secrets/vault_unseal)\""
+    run_vault "vault operator unseal \"\$(cat /run/secrets/vault_unseal)\""
 }
 
 vault_login(){
