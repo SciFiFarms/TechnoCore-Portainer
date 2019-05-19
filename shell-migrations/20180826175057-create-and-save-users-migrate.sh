@@ -6,6 +6,7 @@
 #    echo "Couldn't reach MQTT. Sleeping."
 #    sleep 1
 #done
+# TODO: This is copied to 20190324221228-grafana_and_jupyter-migrate.sh as well.
 until mosquitto_pub -i test_connection -h mqtt -p 8883 -q 0 \
     -t test/network/up \
     -m "A messag.e" \

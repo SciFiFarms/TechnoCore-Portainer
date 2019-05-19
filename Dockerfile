@@ -28,8 +28,8 @@ RUN ln -s /usr/share/dogfish/dogfish /usr/bin/dogfish
 COPY shell-migrations/ /usr/share/dogfish/shell-migrations
 COPY dogfish/shell-migrations-shared/ /usr/share/dogfish/shell-migrations-shared
 
-# Create log file.
-RUN touch /data/migrations.log
+# Create log file and gen-secrets indicator file.
+RUN touch /data/migrations.log /data/gen-secrets 
 
 # Symlink log file.
 RUN mkdir /var/lib/dogfish

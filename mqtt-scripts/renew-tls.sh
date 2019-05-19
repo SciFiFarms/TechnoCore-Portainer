@@ -9,8 +9,9 @@ fi
 # TODO: I've just removed the nginx service. Should actually look at env var to make that judgement. 
 # TODO: I've also removed the portainer service. Should consider making it http.
 # vault needs to be last so that it can create the secrets, and then restart itself.
-declare -a services=(home_assistant mqtt home_assistant_db node_red docs vault )
+declare -a services=(home_assistant mqtt home_assistant_db node_red docs jupyter grafana logs health vault )
 
+# TODO: Copied to 20190324221228-grafana_and_jupyter-migrate.sh
 function run_vault()
 {
     docker exec $(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 2).$(docker service ps -f desired-state=running --no-trunc ${stack_name}_vault | grep ${stack_name} | tr -s " " | cut -d " " -f 1) /bin/sh -c "$@"
