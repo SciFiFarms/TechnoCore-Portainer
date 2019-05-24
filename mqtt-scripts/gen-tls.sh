@@ -37,6 +37,7 @@ then
     create_secret home_assistant domain "$domain.duckdns.org"
     create_secret esphomeyaml domain "$domain.duckdns.org"
     create_secret grafana domain "$domain.duckdns.org"
+    create_secret health domain "$domain.duckdns.org"
     # Update the portainer secret last. It will restart the container.
     create_secret portainer acme_env "$acme_secret"
 else
