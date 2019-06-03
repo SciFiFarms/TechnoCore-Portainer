@@ -87,6 +87,6 @@ sleep 11
 vault_login
 
 # TODO: These are duplicated in the installer. Should combine somehow.
-create_vault_token esphomeyaml
+create_vault_token esphome
 create_vault_token mqtt
 create_vault_token portainer # Do Portainer last. 

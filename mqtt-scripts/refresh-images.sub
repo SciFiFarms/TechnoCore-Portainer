@@ -22,7 +22,7 @@ docker image pull ${image_provider}/technocore-vernemq:${TAG}
 docker service update --force ${stack_name}_mqtt
 docker image pull ${image_provider}/technocore-node-red:${TAG}
 docker service update --force ${stack_name}_node_red
-docker image pull ${image_provider}/technocore-esphomeyaml-wrapper:${TAG}
+docker image pull ${image_provider}/technocore-esphome-wrapper:${TAG}
 docker service update --force ${stack_name}_platformio
 docker image pull ${image_provider}/technocore-vault:${TAG}
 docker service update --force ${stack_name}_vault

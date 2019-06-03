@@ -35,7 +35,7 @@ then
     # the current create_secret can't handle removal of secrets that exist in 
     # more than one service and then fix that if it is an issue
     create_secret home_assistant domain "$domain.duckdns.org"
-    create_secret esphomeyaml domain "$domain.duckdns.org"
+    create_secret esphome domain "$domain.duckdns.org"
     create_secret grafana domain "$domain.duckdns.org"
     create_secret health domain "$domain.duckdns.org"
     # Update the portainer secret last. It will restart the container.
