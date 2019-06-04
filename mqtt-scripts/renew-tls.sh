@@ -9,7 +9,7 @@ fi
 # TODO: I've just removed the nginx service. Should actually look at env var to make that judgement. 
 # TODO: I've also removed the portainer service. Should consider making it http.
 # vault needs to be last so that it can create the secrets, and then restart itself.
-declare -a services=(home_assistant mqtt home_assistant_db node_red docs jupyter grafana logs health vault )
+declare -a services=(home_assistant mqtt home_assistant_db node_red docs jupyter grafana loki health vault )
 
 # TODO: Copied to 20190324221228-grafana_and_jupyter-migrate.sh
 function run_vault()
