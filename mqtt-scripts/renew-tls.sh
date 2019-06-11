@@ -64,17 +64,33 @@ create_vault_token() {
     create_secret ${1} token $token
 }
 
-# TODO: Make an actual flag for insecure mode. --insecure. 
-# In order to use this flag, you MUST be running the command from the service.
-# run_portainer
-# ./renew-tls.sh --insecure
-if [ "${1}" == "--insecure" ]; then
-    echo "Running in insecure mode"
-    insecure="-tls-skip-verify"
-fi
+# $@ the arguments to pass into yq. See http://mikefarah.github.io/yq/
+# Alternatives: https://stackoverflow.com/questions/5014632/how-can-i-parse-a-yaml-file-from-a-linux-shell-script
+# Documentation: https://yq.readthedocs.io/en/latest/
+#                http://mikefarah.github.io/yq/
+technocore_folder=$host_working_dir
+yq() {
+    docker run --rm -v $technocore_folder/:/workdir mikefarah/yq:2.2.0 yq $@
+}
 
 # TODO: Wrap these in a pythonish if __main__ kinda wrapper to allow lib usage 
 #       as well as being directly runnable.
+
+# Generate any needed secrets.
+for secret in $(yq read docker-compose.yml 'secrets.*.name')
+do
+    # This way of reading the file results in a ton of "-" secrets. Don't know why.
+    if [ "$secret" = "-" ]; then
+        continue
+    fi
+
+    secret=$(eval echo $secret)
+    #echo "Secret: $secret"
+    if ! docker secret inspect "$secret" &> /dev/null ; then
+        echo "Initializing secret $secret"
+        echo -e "Not yet set." | docker secret create $secret - > /dev/null
+    fi
+done
 
 vault_login
 create_TLS_certs
