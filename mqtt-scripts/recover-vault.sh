@@ -47,9 +47,9 @@ sleep 10
 #       these from within the container itself. Although come to think of it, 
 #       I'm not sure the container has the secrets... Would have to add and 
 #       remove as a temporary service to add a secret. May even need a stack?
-vault_i operator unseal \$(cat /run/secrets/vault_unseal)
+vault_i operator unseal "$(cat /run/secrets/unseal)"
 #vault_i operator unseal "$(cat /run/secrets/unseal)"
-vault_i login \$(cat /run/secrets/vault_token)
+vault_i login "$(cat /run/secrets/token)"
 create_tls vault
 
 # Cleanup
